@@ -33,17 +33,6 @@ export function ClientList({
     return colors[status?.toLowerCase()] || "border-l-4 border-gray-300";
   };
 
-  const confirmAction = ({ title, message, onConfirm }) => {
-    confirmAlert({
-      title,
-      message,
-      buttons: [
-        { label: "Yes", onClick: onConfirm },
-        { label: "No", onClick: () => {} },
-      ],
-    });
-  };
-
   const getStatusStyle = (status) => {
     const styles = {
       active: "bg-green-100 text-green-800",
@@ -52,6 +41,38 @@ export function ClientList({
       "care home": "bg-blue-100 text-blue-800",
     };
     return styles[status?.toLowerCase()] || "bg-gray-100 text-gray-800";
+  };
+
+  const confirmAction = (title, message, onConfirm) => {
+    confirmAlert({
+      title,
+      message,
+      buttons: [{ label: "Yes", onClick: onConfirm }, { label: "No" }],
+    });
+  };
+
+  const handleDeleteClient = (clientId) => {
+    confirmAction(
+      "Confirm Deletion",
+      "Are you sure you want to delete this client?",
+      () => {
+        dispatch(deleteClient(clientId))
+          .then(() => toast.success("Client deleted"))
+          .catch(() => toast.error("Delete failed"));
+      }
+    );
+  };
+
+  const handleArchiveClient = (clientId) => {
+    dispatch(archiveClient(clientId))
+      .then(() => toast.success("Client archived"))
+      .catch(() => toast.error("Archive failed"));
+  };
+
+  const handleUnarchiveClient = (clientId) => {
+    dispatch(unarchiveClient(clientId))
+      .then(() => toast.success("Client unarchived"))
+      .catch(() => toast.error("Unarchive failed"));
   };
 
   return (
@@ -74,12 +95,12 @@ export function ClientList({
                   : "No clients found."}
               </div>
             ) : (
-              clientData.map((client, index) => (
+              clientData.map((client) => (
                 <div
-                  key={index}
+                  key={client._id}
                   className={`p-6 hover:bg-gray-50 transition-colors ${getBorderColor(
                     client.status
-                  )} `}
+                  )}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -101,12 +122,10 @@ export function ClientList({
                             {client.personalDetails?.fullName}
                           </h3>
                           {isPrivateClient(client) && (
-                            <div
-                              className="flex items-center"
+                            <Lock
+                              className="w-4 h-4 text-amber-600"
                               title="Private Client"
-                            >
-                              <Lock className="w-4 h-4 text-amber-600" />
-                            </div>
+                            />
                           )}
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusStyle(
@@ -156,20 +175,7 @@ export function ClientList({
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => {
-                          confirmAction({
-                            title: "Confirm Deletion",
-                            message:
-                              "Are you sure you want to delete this client?",
-                            onConfirm: () => {
-                              dispatch(deleteClient(client._id))
-                                .then(() => {
-                                  toast.success("Client deleted");
-                                })
-                                .catch(() => toast.error("Delete failed"));
-                            },
-                          });
-                        }}
+                        onClick={() => handleDeleteClient(client._id)}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete Client"
                       >
@@ -177,13 +183,7 @@ export function ClientList({
                       </button>
                       {!client.Archived && (
                         <button
-                          onClick={() => {
-                            dispatch(archiveClient(client._id))
-                              .then(() => {
-                                toast.success("Client archived");
-                              })
-                              .catch(() => toast.error("Archive failed"));
-                          }}
+                          onClick={() => handleArchiveClient(client._id)}
                           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
                           title="Archive Client"
                         >
@@ -192,13 +192,7 @@ export function ClientList({
                       )}
                       {client.Archived && (
                         <button
-                          onClick={() => {
-                            dispatch(unarchiveClient(client._id))
-                              .then(() => {
-                                toast.success("Client unarchived");
-                              })
-                              .catch(() => toast.error("Unarchive failed"));
-                          }}
+                          onClick={() => handleUnarchiveClient(client._id)}
                           className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Unarchive Client"
                         >
@@ -212,7 +206,6 @@ export function ClientList({
             )}
           </div>
 
-          {/* Pagination */}
           {pages > 1 && (
             <div className="flex justify-center mt-4 space-x-2 px-6 pb-6">
               {Array.from({ length: pages }, (_, i) => (

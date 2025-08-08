@@ -3,8 +3,15 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const Contact = require('../models/contactModel');
 const CarePlan = require('../models/carePlanModel');
-const Outcome = require('../models/outcomeModel');
 const ActivityLog = require('../models/activityLogModel');
+const CarePlanDocument = require('../models/carePlanDocumentModel');
+const Communication = require('../models/communicationModel');
+const Document = require('../models/documentModel');
+const Outcome = require('../models/outcomeModel');
+const RiskAssessment = require('../models/riskAssessmentModel');
+const VisitSchedule = require('../models/visitScheduleModel');
+const VisitType = require('../models/visitTypeModel');
+const TaskOption = require("../models/taskOptionModel");
 const multer = require('multer');
 const path = require('path');
 const storage = multer.diskStorage({
@@ -170,7 +177,7 @@ exports.updateClient = catchAsync(async (req, res, next) => {
             }
             if (section) break;
         }
-      
+
         let actionMsg = 'Updated client';
         if (section) {
             switch (section) {
@@ -180,8 +187,6 @@ exports.updateClient = catchAsync(async (req, res, next) => {
                     actionMsg = 'Address information updated'; break;
                 case 'contactInformation':
                     actionMsg = 'Contact information updated'; break;
-                case 'nextOfKin':
-                    actionMsg = 'Next of kin updated'; break;
                 case 'consent':
                     actionMsg = 'Consent updated'; break;
                 case 'healthcareContacts':
@@ -200,7 +205,7 @@ exports.updateClient = catchAsync(async (req, res, next) => {
         }
         await ActivityLog.create({ client: client._id, action: actionMsg, user: 'Admin' });
     }
-    
+
     res.status(200).json({
         status: 'Success',
         data: {
@@ -211,20 +216,38 @@ exports.updateClient = catchAsync(async (req, res, next) => {
 
 
 exports.deleteClient = catchAsync(async (req, res, next) => {
-    const client = await Client.findById(req.params.id);
-    if (!client) return next(new AppError(`No client found with that ID`, 404));
-    // Log activity (not needed for client delete, as discussed)
-    await client.save();
-    // Cascade delete related contacts, care plans, and outcomes
-    await Contact.deleteMany({ client: client._id });
-    await CarePlan.deleteMany({ clientId: client._id });
-    await Outcome.deleteMany({ clientId: client._id });
-    await Client.findByIdAndDelete(req.params.id);
-    res.status(204).json({
+    const { id } = req.params;
+
+
+    const client = await Client.findByIdAndDelete(id);
+    if (!client) {
+        return next(new AppError(`No client found with that ID`, 404));
+    }
+
+
+    // Work on this,this is not working
+    // await Promise.all([
+    //     Contact.deleteMany({ client: client._id }),
+    //     CarePlan.deleteMany({ clientId: client._id }),
+    //     Outcome.deleteMany({ clientId: client._id }),
+    //     ActivityLog.deleteMany({ client: client._id }),
+    //     CarePlanDocument.deleteMany({ clientId: client._id }),
+    //     Communication.deleteMany({ client: client._id }),
+    //     Document.deleteMany({ client: client._id }),
+    //     RiskAssessment.deleteMany({ client: client._id }),
+    //     VisitSchedule.deleteMany({ client: client._id }),
+    //     VisitType.deleteMany({ client: client._id }),
+    //     TaskOption.deleteMany({ client: client._id }),
+    // ]);
+
+
+    res.status(200).json({
         status: 'Success',
-        data: 'Client deleted Successfully'
+        data: id
     });
-})
+});
+
+
 
 
 exports.archiveClient = catchAsync(async (req, res, next) => {

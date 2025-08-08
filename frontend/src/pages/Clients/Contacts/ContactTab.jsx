@@ -122,11 +122,6 @@ export function ContactTab({ client }) {
     }
   };
 
-  const handleDeleteContact = (contactId) => {
-    setContactToDelete(contactId);
-    setShowDeleteModal(true);
-  };
-
   const confirmDeleteContact = async () => {
     try {
       await dispatch(
@@ -460,7 +455,7 @@ export function ContactTab({ client }) {
                             </button>
                             <button
                               onClick={() => {
-                                setContactToDelete(contact);
+                                setContactToDelete(contact._id);
                                 setShowDeleteModal(true);
                               }}
                               className="p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded transition-colors"

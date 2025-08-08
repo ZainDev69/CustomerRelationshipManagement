@@ -41,7 +41,7 @@ export function OutcomesTab({ clientId }) {
   // Fetch outcome options on component mount
   useEffect(() => {
     dispatch(fetchOutcomeOptions());
-  }, [dispatch, options]);
+  }, [dispatch]);
 
   // Fetch client outcomes on component mount
   useEffect(() => {

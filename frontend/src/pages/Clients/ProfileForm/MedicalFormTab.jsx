@@ -1,6 +1,5 @@
 import { Button } from "../../../components/ui/Button";
 import { Plus, Trash2, Activity, AlertTriangle, Pill } from "lucide-react";
-import { Section } from "../../../components/ui/Section";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { useSelector } from "react-redux";
@@ -59,8 +58,12 @@ export function MedicalFormTab({ formData, setFormData }) {
                 <Activity className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">Medical Conditions</h2>
-                <p className="text-red-100 mt-1 text-sm">Diagnosed medical conditions and health status</p>
+                <h2 className="text-lg font-semibold text-white">
+                  Medical Conditions
+                </h2>
+                <p className="text-red-100 mt-1 text-sm">
+                  Diagnosed medical conditions and health status
+                </p>
               </div>
             </div>
             <Button
@@ -90,53 +93,59 @@ export function MedicalFormTab({ formData, setFormData }) {
                 key={item.id}
                 className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl p-6 space-y-4"
               >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                label="Condition"
-                value={item.condition}
-                onChange={(val) =>
-                  updateItem("conditions", i, "condition", val)
-                }
-              />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Input
+                    label="Condition"
+                    value={item.condition}
+                    onChange={(val) =>
+                      updateItem("conditions", i, "condition", val)
+                    }
+                  />
 
-              <Select
-                label="Severity"
-                value={item.severity}
-                onChange={(val) => updateItem("conditions", i, "severity", val)}
-                options={
-                  clientOptionsLoading
-                    ? ["Loading options..."]
-                    : conditionSeverityOptions
-                }
-                disabled={clientOptionsLoading}
-              />
+                  <Select
+                    label="Severity"
+                    value={item.severity}
+                    onChange={(val) =>
+                      updateItem("conditions", i, "severity", val)
+                    }
+                    options={
+                      clientOptionsLoading
+                        ? ["Loading options..."]
+                        : conditionSeverityOptions
+                    }
+                    disabled={clientOptionsLoading}
+                  />
 
-              <Select
-                label="Status"
-                value={item.status}
-                onChange={(val) => updateItem("conditions", i, "status", val)}
-                options={
-                  clientOptionsLoading
-                    ? ["Loading options..."]
-                    : conditionStatusOptions
-                }
-                disabled={clientOptionsLoading}
-              />
-              <Input
-                type="date"
-                label="Diagnosis Date"
-                value={item.diagnosisDate}
-                onChange={(val) =>
-                  updateItem("conditions", i, "diagnosisDate", val)
-                }
-              />
-              <Input
-                label="Notes"
-                value={item.notes}
-                onChange={(val) => updateItem("conditions", i, "notes", val)}
-                full
-              />
-            </div>
+                  <Select
+                    label="Status"
+                    value={item.status}
+                    onChange={(val) =>
+                      updateItem("conditions", i, "status", val)
+                    }
+                    options={
+                      clientOptionsLoading
+                        ? ["Loading options..."]
+                        : conditionStatusOptions
+                    }
+                    disabled={clientOptionsLoading}
+                  />
+                  <Input
+                    type="date"
+                    label="Diagnosis Date"
+                    value={item.diagnosisDate}
+                    onChange={(val) =>
+                      updateItem("conditions", i, "diagnosisDate", val)
+                    }
+                  />
+                  <Input
+                    label="Notes"
+                    value={item.notes}
+                    onChange={(val) =>
+                      updateItem("conditions", i, "notes", val)
+                    }
+                    full
+                  />
+                </div>
                 <div className="flex justify-end">
                   <button
                     type="button"
@@ -152,7 +161,9 @@ export function MedicalFormTab({ formData, setFormData }) {
             {formData.medicalInformation.conditions.length === 0 && (
               <div className="text-center py-8">
                 <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No medical conditions added yet.</p>
+                <p className="text-gray-500">
+                  No medical conditions added yet.
+                </p>
               </div>
             )}
           </div>
@@ -169,7 +180,9 @@ export function MedicalFormTab({ formData, setFormData }) {
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-white">Allergies</h2>
-                <p className="text-yellow-100 mt-1 text-sm">Known allergies and adverse reactions</p>
+                <p className="text-yellow-100 mt-1 text-sm">
+                  Known allergies and adverse reactions
+                </p>
               </div>
             </div>
             <Button
@@ -199,34 +212,42 @@ export function MedicalFormTab({ formData, setFormData }) {
                 key={item.id}
                 className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-6 space-y-4"
               >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Allergen"
-                value={item.allergen}
-                onChange={(val) => updateItem("allergies", i, "allergen", val)}
-              />
-              <Input
-                label="Reaction"
-                value={item.reaction}
-                onChange={(val) => updateItem("allergies", i, "reaction", val)}
-              />
-              <Select
-                label="Severity"
-                value={item.severity}
-                onChange={(val) => updateItem("allergies", i, "severity", val)}
-                options={
-                  clientOptionsLoading
-                    ? ["Loading options..."]
-                    : allergySeverityOptions
-                }
-                disabled={clientOptionsLoading}
-              />
-              <Input
-                label="Treatment"
-                value={item.treatment}
-                onChange={(val) => updateItem("allergies", i, "treatment", val)}
-              />
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Allergen"
+                    value={item.allergen}
+                    onChange={(val) =>
+                      updateItem("allergies", i, "allergen", val)
+                    }
+                  />
+                  <Input
+                    label="Reaction"
+                    value={item.reaction}
+                    onChange={(val) =>
+                      updateItem("allergies", i, "reaction", val)
+                    }
+                  />
+                  <Select
+                    label="Severity"
+                    value={item.severity}
+                    onChange={(val) =>
+                      updateItem("allergies", i, "severity", val)
+                    }
+                    options={
+                      clientOptionsLoading
+                        ? ["Loading options..."]
+                        : allergySeverityOptions
+                    }
+                    disabled={clientOptionsLoading}
+                  />
+                  <Input
+                    label="Treatment"
+                    value={item.treatment}
+                    onChange={(val) =>
+                      updateItem("allergies", i, "treatment", val)
+                    }
+                  />
+                </div>
                 <div className="flex justify-end">
                   <button
                     type="button"
@@ -258,8 +279,12 @@ export function MedicalFormTab({ formData, setFormData }) {
                 <Pill className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">Medications</h2>
-                <p className="text-blue-100 mt-1 text-sm">Current and prescribed medications</p>
+                <h2 className="text-lg font-semibold text-white">
+                  Medications
+                </h2>
+                <p className="text-blue-100 mt-1 text-sm">
+                  Current and prescribed medications
+                </p>
               </div>
             </div>
             <Button
@@ -292,59 +317,65 @@ export function MedicalFormTab({ formData, setFormData }) {
                 key={item.id}
                 className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 space-y-4"
               >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                label="Medication Name"
-                value={item.name}
-                onChange={(val) => updateItem("medications", i, "name", val)}
-              />
-              <Input
-                label="Dosage"
-                value={item.dosage}
-                onChange={(val) => updateItem("medications", i, "dosage", val)}
-              />
-              <Input
-                label="Frequency"
-                value={item.frequency}
-                onChange={(val) =>
-                  updateItem("medications", i, "frequency", val)
-                }
-              />
-              <Select
-                label="Route"
-                value={item.route}
-                onChange={(val) => updateItem("medications", i, "route", val)}
-                options={
-                  clientOptionsLoading
-                    ? ["Loading options..."]
-                    : medicationRouteOptions
-                }
-                disabled={clientOptionsLoading}
-              />
-              <Input
-                label="Prescribed By"
-                value={item.prescribedBy}
-                onChange={(val) =>
-                  updateItem("medications", i, "prescribedBy", val)
-                }
-              />
-              <Input
-                type="date"
-                label="Start Date"
-                value={item.startDate}
-                onChange={(val) =>
-                  updateItem("medications", i, "startDate", val)
-                }
-              />
-              <Input
-                label="Indication"
-                value={item.indication}
-                onChange={(val) =>
-                  updateItem("medications", i, "indication", val)
-                }
-                full
-              />
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Input
+                    label="Medication Name"
+                    value={item.name}
+                    onChange={(val) =>
+                      updateItem("medications", i, "name", val)
+                    }
+                  />
+                  <Input
+                    label="Dosage"
+                    value={item.dosage}
+                    onChange={(val) =>
+                      updateItem("medications", i, "dosage", val)
+                    }
+                  />
+                  <Input
+                    label="Frequency"
+                    value={item.frequency}
+                    onChange={(val) =>
+                      updateItem("medications", i, "frequency", val)
+                    }
+                  />
+                  <Select
+                    label="Route"
+                    value={item.route}
+                    onChange={(val) =>
+                      updateItem("medications", i, "route", val)
+                    }
+                    options={
+                      clientOptionsLoading
+                        ? ["Loading options..."]
+                        : medicationRouteOptions
+                    }
+                    disabled={clientOptionsLoading}
+                  />
+                  <Input
+                    label="Prescribed By"
+                    value={item.prescribedBy}
+                    onChange={(val) =>
+                      updateItem("medications", i, "prescribedBy", val)
+                    }
+                  />
+                  <Input
+                    type="date"
+                    label="Start Date"
+                    value={item.startDate}
+                    onChange={(val) =>
+                      updateItem("medications", i, "startDate", val)
+                    }
+                  />
+                  <Input
+                    label="Indication"
+                    value={item.indication}
+                    onChange={(val) =>
+                      updateItem("medications", i, "indication", val)
+                    }
+                    full
+                  />
+                </div>
                 <div className="flex justify-end">
                   <button
                     type="button"

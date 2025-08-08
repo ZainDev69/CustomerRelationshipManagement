@@ -7,7 +7,6 @@ import { VisitScheduleManager } from "../Visits/VisitScheduleManager";
 import { DocumentationManager } from "../Documents/DocumentationManager";
 import { ComplianceTracker } from "../Compliance/ComplianceTracker";
 import { useDispatch } from "react-redux";
-import { OverviewTab } from "../Overview/OverviewTab";
 import { PersonalTab } from "../Personal/PersonalTab";
 import { MedicalTab } from "../Medical/MedicalTab";
 import { fetchContacts } from "../../../components/redux/slice/contacts";
@@ -24,16 +23,12 @@ import {
   MessageSquare,
   Activity,
   ChevronRight,
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
   AlertCircle,
   Zap,
   Brain,
   Skull,
 } from "lucide-react";
-import { getClientImage } from "../../../utils/avatarUtils";
+
 import {
   getClientInitials,
   getInitialsColor,
@@ -44,8 +39,6 @@ export function ClientProfileDetails({ client, onBack, onClientUpdate }) {
   const [activeSection, setActiveSection] = useState("dashboard");
 
   const dispatch = useDispatch();
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:5500";
 
   useEffect(() => {
     if (client?._id) {

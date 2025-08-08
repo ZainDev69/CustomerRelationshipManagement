@@ -65,10 +65,10 @@ export const getClient = createAsyncThunk(
 
 export const deleteClient = createAsyncThunk(
     "clients/deleteClient",
-    async (clientId, { rejectWithValue }) => {
+    async (id, { rejectWithValue }) => {
         try {
-            await axios.delete(`${API_URL}/clients/${clientId}`, { withCredentials: true });
-            return clientId;
+            await axios.delete(`${API_URL}/clients/${id}`, { withCredentials: true });
+            return id;
         } catch (error) {
             return rejectWithValue({ message: error.response?.data?.message || error.message });
         }
