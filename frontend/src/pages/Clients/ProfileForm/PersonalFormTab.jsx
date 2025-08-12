@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Section } from "../../../components/ui/Section";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { Checkbox } from "../../../components/ui/Checkbox";

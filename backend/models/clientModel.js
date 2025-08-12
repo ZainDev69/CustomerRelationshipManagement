@@ -6,12 +6,12 @@ const clientSchema = new mongoose.Schema({
     startDate: { type: Date, default: Date.now }, // Automatically set when client is created
     reviewDate: { type: Date }, // Will be calculated as 6 months after start date
     personalDetails: {
-        title: { type: String, required: true, enum: ['Mr', 'Mrs', 'Miss', 'Ms', 'Dr', 'Prof', 'Rev'] },
+        title: { type: String, enum: ['Mr', 'Mrs', 'Miss', 'Ms', 'Dr', 'Prof', 'Rev'] },
         fullName: { type: String, required: true },
         preferredName: String,
         dateOfBirth: { type: Date, required: true },
-        gender: { type: String, required: true, enum: ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say'] },
-        nhsNumber: { type: String, required: true },
+        gender: { type: String, enum: ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say'] },
+        nhsNumber: { type: String },
         relationshipStatus: { type: String, enum: ['Single', 'Married', 'Civil Partnership', 'Divorced', 'Widowed', 'Separated', 'Other', 'Prefer Not to Say'] },
         ethnicity: {
             type: String, enum: [
@@ -25,14 +25,14 @@ const clientSchema = new mongoose.Schema({
     status: { type: String, enum: ['Active', 'Inactive', 'Hospitalized', 'Care Home'] },
     addressInformation: {
         address: { type: String, required: true },
-        city: { type: String, required: true },
+        city: { type: String },
         county: String,
         postCode: String,
         country: { type: String, default: 'United Kingdom' },
         accessInstructions: String,
     },
     contactInformation: {
-        primaryPhone: { type: String, required: true },
+        primaryPhone: { type: String },
         secondaryPhone: String,
         email: String,
         preferredContactMethod: { type: String, enum: ['Phone', 'Email', 'Post', 'In Person'] },
