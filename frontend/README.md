@@ -5,5 +5,4 @@ npm install @tanstack/react-query @tanstack/react-query-devtools
 
 Then migrate the Code from Redux to React Query or TanStack Query
 
-For Form Validation and React hook forms.
-npm install react-hook-form @hookform/resolvers zod
+npm i formik yup
