@@ -1,7 +1,5 @@
 const express = require('express');
 const clientController = require('./../controllers/clientController')
-const { validateClient } = require('../validators/clientValidator');
-const validate = require('../middlewares/validateResult');
 const multer = require('multer');
 const path = require('path');
 const storage = multer.diskStorage({
@@ -26,7 +24,7 @@ router.get('/check-id', clientController.checkClientId);
 
 router.route('/')
     .get(clientController.getClients)
-    .post(validateClient, validate, clientController.createClient);
+    .post(clientController.createClient);
 
 
 
