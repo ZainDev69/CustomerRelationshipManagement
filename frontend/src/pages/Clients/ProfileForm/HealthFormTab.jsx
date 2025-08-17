@@ -12,63 +12,65 @@ export function HealthFormTab({ formData, handleNestedChange }) {
               <Heart className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">General Practitioner</h2>
-              <p className="text-blue-100 mt-1 text-sm">Primary healthcare provider information</p>
+              <h2 className="text-lg font-semibold text-white">
+                General Practitioner
+              </h2>
+              <p className="text-blue-100 mt-1 text-sm">
+                Primary healthcare provider information
+              </p>
             </div>
           </div>
         </div>
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="GP Name"
-            value={formData.healthcareContacts.gp.name}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "gp",
-                "name",
-                value
-              )
-            }
-          />
-          <Input
-            label="Surgery Name"
-            value={formData.healthcareContacts.surgery.name}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "surgery",
-                "name",
-                value
-              )
-            }
-          />
-          <Input
-            label="Phone"
-            type="tel"
-            value={formData.healthcareContacts.gp.phone}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "gp",
-                "phone",
-                value
-              )
-            }
-          />
-          <Input
-            label="Email"
-            type="email"
-            value={formData.healthcareContacts.gp.email}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "gp",
-                "email",
-                value
-              )
-            }
-          />
+            <Input
+              label="GP Name"
+              value={formData.healthcareContacts.gp.name}
+              onChange={(value) =>
+                handleNestedChange("healthcareContacts", "gp", "name", value)
+              }
+            />
+            <Input
+              label="GP Organization"
+              value={formData.healthcareContacts.gp.organization}
+              onChange={(value) =>
+                handleNestedChange(
+                  "healthcareContacts",
+                  "gp",
+                  "organization",
+                  value
+                )
+              }
+              placeholder="e.g., NHS Trust, Private Practice"
+            />
+            <Input
+              label="Surgery Name"
+              value={formData.healthcareContacts.surgery.name}
+              onChange={(value) =>
+                handleNestedChange(
+                  "healthcareContacts",
+                  "surgery",
+                  "name",
+                  value
+                )
+              }
+            />
+            <Input
+              label="Phone"
+              type="tel"
+              value={formData.healthcareContacts.gp.phone}
+              onChange={(value) =>
+                handleNestedChange("healthcareContacts", "gp", "phone", value)
+              }
+            />
+            <Input
+              label="Email"
+              type="email"
+              value={formData.healthcareContacts.gp.email}
+              onChange={(value) =>
+                handleNestedChange("healthcareContacts", "gp", "email", value)
+              }
+            />
           </div>
         </div>
       </div>
@@ -81,52 +83,56 @@ export function HealthFormTab({ formData, handleNestedChange }) {
               <Heart className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Surgery Information</h2>
-              <p className="text-emerald-100 mt-1 text-sm">Medical practice and facility details</p>
+              <h2 className="text-lg font-semibold text-white">
+                Surgery Information
+              </h2>
+              <p className="text-emerald-100 mt-1 text-sm">
+                Medical practice and facility details
+              </p>
             </div>
           </div>
         </div>
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Surgery Phone"
-            type="tel"
-            value={formData.healthcareContacts.surgery.phone}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "surgery",
-                "phone",
-                value
-              )
-            }
-          />
-          <Input
-            label="Out of Hours Number"
-            type="tel"
-            value={formData.healthcareContacts.surgery.outOfHoursNumber}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "surgery",
-                "outOfHoursNumber",
-                value
-              )
-            }
-          />
-          <Input
-            label="Surgery Address"
-            full
-            value={formData.healthcareContacts.surgery.address}
-            onChange={(value) =>
-              handleNestedChange(
-                "healthcareContacts",
-                "surgery",
-                "address",
-                value
-              )
-            }
-          />
+            <Input
+              label="Surgery Phone"
+              type="tel"
+              value={formData.healthcareContacts.surgery.phone}
+              onChange={(value) =>
+                handleNestedChange(
+                  "healthcareContacts",
+                  "surgery",
+                  "phone",
+                  value
+                )
+              }
+            />
+            <Input
+              label="Out of Hours Number"
+              type="tel"
+              value={formData.healthcareContacts.surgery.outOfHoursNumber}
+              onChange={(value) =>
+                handleNestedChange(
+                  "healthcareContacts",
+                  "surgery",
+                  "outOfHoursNumber",
+                  value
+                )
+              }
+            />
+            <Input
+              label="Surgery Address"
+              full
+              value={formData.healthcareContacts.surgery.address}
+              onChange={(value) =>
+                handleNestedChange(
+                  "healthcareContacts",
+                  "surgery",
+                  "address",
+                  value
+                )
+              }
+            />
           </div>
         </div>
       </div>

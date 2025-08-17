@@ -1,7 +1,16 @@
 import { Button } from "../../../components/ui/Button";
-import { Plus, Trash2, Activity, AlertTriangle, Pill } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Activity,
+  AlertTriangle,
+  Pill,
+  Brain,
+  ShieldCheck,
+} from "lucide-react";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
+import { Checkbox } from "../../../components/ui/Checkbox";
 import { useSelector } from "react-redux";
 import { useApp } from "../../../components/Context/AppContext";
 
@@ -43,6 +52,62 @@ export function MedicalFormTab({ formData, setFormData }) {
       medicalInformation: {
         ...prev.medicalInformation,
         [type]: prev.medicalInformation[type].filter((_, i) => i !== index),
+      },
+    }));
+  };
+
+  const handleNestedChange = (section, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      medicalInformation: {
+        ...prev.medicalInformation,
+        [section]: {
+          ...prev.medicalInformation[section],
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  const addArrayItem = (section, field, item) => {
+    setFormData((prev) => ({
+      ...prev,
+      medicalInformation: {
+        ...prev.medicalInformation,
+        [section]: {
+          ...prev.medicalInformation[section],
+          [field]: [...(prev.medicalInformation[section]?.[field] || []), item],
+        },
+      },
+    }));
+  };
+
+  const removeArrayItem = (section, field, index) => {
+    setFormData((prev) => ({
+      ...prev,
+      medicalInformation: {
+        ...prev.medicalInformation,
+        [section]: {
+          ...prev.medicalInformation[section],
+          [field]: prev.medicalInformation[section][field].filter(
+            (_, i) => i !== index
+          ),
+        },
+      },
+    }));
+  };
+
+  const updateArrayItem = (section, field, index, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      medicalInformation: {
+        ...prev.medicalInformation,
+        [section]: {
+          ...prev.medicalInformation[section],
+          [field]: prev.medicalInformation[section][field].map((item, i) =>
+            i === index ? value : item
+          ),
+        },
       },
     }));
   };
@@ -394,6 +459,265 @@ export function MedicalFormTab({ formData, setFormData }) {
                 <p className="text-gray-500">No medications added yet.</p>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mental Capacity */}
+      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-gradient-to-r from-purple-500 to-violet-600 px-8 py-6">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+              <Brain className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Mental Capacity Assessment
+              </h2>
+              <p className="text-purple-100 mt-1 text-sm">
+                Mental capacity evaluation and decision-making support
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-8">
+          <div className="space-y-6">
+            <div className="flex items-center space-x-3">
+              <Checkbox
+                id="hasCapacity"
+                label="Client has mental capacity to make decisions"
+                checked={
+                  formData.medicalInformation.mentalCapacity?.hasCapacity ??
+                  true
+                }
+                onChange={(checked) =>
+                  handleNestedChange("mentalCapacity", "hasCapacity", checked)
+                }
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                type="date"
+                label="Assessment Date"
+                value={
+                  formData.medicalInformation.mentalCapacity?.assessmentDate ||
+                  ""
+                }
+                onChange={(val) =>
+                  handleNestedChange("mentalCapacity", "assessmentDate", val)
+                }
+              />
+              <Input
+                label="Assessed By"
+                value={
+                  formData.medicalInformation.mentalCapacity?.assessedBy || ""
+                }
+                onChange={(val) =>
+                  handleNestedChange("mentalCapacity", "assessedBy", val)
+                }
+              />
+              <Input
+                type="date"
+                label="Review Date"
+                value={
+                  formData.medicalInformation.mentalCapacity?.reviewDate || ""
+                }
+                onChange={(val) =>
+                  handleNestedChange("mentalCapacity", "reviewDate", val)
+                }
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Specific Decisions Assessed
+                </label>
+                <div className="space-y-2">
+                  {(
+                    formData.medicalInformation.mentalCapacity
+                      ?.specificDecisions || []
+                  ).map((decision, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <Input
+                        value={decision}
+                        onChange={(val) =>
+                          updateArrayItem(
+                            "mentalCapacity",
+                            "specificDecisions",
+                            index,
+                            val
+                          )
+                        }
+                        placeholder="e.g., Financial decisions, medical treatment"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeArrayItem(
+                            "mentalCapacity",
+                            "specificDecisions",
+                            index
+                          )
+                        }
+                        className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    onClick={() =>
+                      addArrayItem("mentalCapacity", "specificDecisions", "")
+                    }
+                    variant="secondary"
+                    icon={Plus}
+                    className="w-full"
+                  >
+                    Add Decision Type
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Support Needs
+                </label>
+                <div className="space-y-2">
+                  {(
+                    formData.medicalInformation.mentalCapacity?.supportNeeds ||
+                    []
+                  ).map((need, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <Input
+                        value={need}
+                        onChange={(val) =>
+                          updateArrayItem(
+                            "mentalCapacity",
+                            "supportNeeds",
+                            index,
+                            val
+                          )
+                        }
+                        placeholder="e.g., Communication support, advocacy"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeArrayItem(
+                            "mentalCapacity",
+                            "supportNeeds",
+                            index
+                          )
+                        }
+                        className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    onClick={() =>
+                      addArrayItem("mentalCapacity", "supportNeeds", "")
+                    }
+                    variant="secondary"
+                    icon={Plus}
+                    className="w-full"
+                  >
+                    Add Support Need
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <Input
+              label="Notes"
+              value={formData.medicalInformation.mentalCapacity?.notes || ""}
+              onChange={(val) =>
+                handleNestedChange("mentalCapacity", "notes", val)
+              }
+              full
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* DNR (Do Not Resuscitate) */}
+      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-gradient-to-r from-gray-600 to-gray-800 px-8 py-6">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+              <ShieldCheck className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Do Not Resuscitate (DNR)
+              </h2>
+              <p className="text-gray-100 mt-1 text-sm">
+                End-of-life care preferences and advance directives
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-8">
+          <div className="space-y-6">
+            <div className="flex items-center space-x-3">
+              <Checkbox
+                id="hasDNR"
+                label="Client has a DNR order in place"
+                checked={formData.medicalInformation.dnr?.hasDNR ?? false}
+                onChange={(checked) =>
+                  handleNestedChange("dnr", "hasDNR", checked)
+                }
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                type="date"
+                label="Date Issued"
+                value={formData.medicalInformation.dnr?.dateIssued || ""}
+                onChange={(val) => handleNestedChange("dnr", "dateIssued", val)}
+              />
+              <Input
+                label="Issued By"
+                value={formData.medicalInformation.dnr?.issuedBy || ""}
+                onChange={(val) => handleNestedChange("dnr", "issuedBy", val)}
+              />
+              <Input
+                type="date"
+                label="Review Date"
+                value={formData.medicalInformation.dnr?.reviewDate || ""}
+                onChange={(val) => handleNestedChange("dnr", "reviewDate", val)}
+              />
+              <Input
+                label="Location of DNR"
+                value={formData.medicalInformation.dnr?.location || ""}
+                onChange={(val) => handleNestedChange("dnr", "location", val)}
+                placeholder="e.g., Home, Hospital, Care Home"
+              />
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <Checkbox
+                id="familyAware"
+                label="Family/Next of Kin are aware of DNR order"
+                checked={formData.medicalInformation.dnr?.familyAware ?? false}
+                onChange={(checked) =>
+                  handleNestedChange("dnr", "familyAware", checked)
+                }
+              />
+            </div>
+
+            <Input
+              label="Notes"
+              value={formData.medicalInformation.dnr?.notes || ""}
+              onChange={(val) => handleNestedChange("dnr", "notes", val)}
+              full
+            />
           </div>
         </div>
       </div>
