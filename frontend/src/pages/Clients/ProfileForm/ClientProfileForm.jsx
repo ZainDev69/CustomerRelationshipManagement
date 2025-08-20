@@ -4,12 +4,13 @@ import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { checkClientId } from "../../../components/redux/slice/clients";
 import { Button } from "../../../components/ui/Button";
-import { PhotoUpload } from "./PhotoUpload";
 import { PersonalFormTab } from "./PersonalFormTab";
 import { HealthFormTab } from "./HealthFormTab";
 import { MedicalFormTab } from "./MedicalFormTab";
 import { PrefrencesFormTab } from "./PrefrencesFormTab";
 import { FormTabs } from "./FormTabs";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export function ClientProfileForm({ client, onBack, onSave }) {
   const dispatch = useDispatch();
@@ -20,39 +21,40 @@ export function ClientProfileForm({ client, onBack, onSave }) {
   const [photoFile, setPhotoFile] = useState(null);
   const toInputDate = (val) => (val ? val.slice(0, 10) : "");
 
-  const [formData, setFormData] = useState({
+  // Formik initial values
+  const initialValues = {
     clientId: client?.clientId || "",
     personalDetails: {
-      title: client?.personalDetails.title || "",
-      fullName: client?.personalDetails.fullName || "",
-      preferredName: client?.personalDetails.preferredName || "",
-      dateOfBirth: toInputDate(client?.personalDetails.dateOfBirth),
-      gender: client?.personalDetails.gender || "",
-      nhsNumber: client?.personalDetails.nhsNumber || "",
-      relationshipStatus: client?.personalDetails.relationshipStatus || "",
-      ethnicity: client?.personalDetails.ethnicity || "",
-      historyandBackground: client?.personalDetails.historyandBackground || "",
+      title: client?.personalDetails?.title || "",
+      fullName: client?.personalDetails?.fullName || "",
+      preferredName: client?.personalDetails?.preferredName || "",
+      dateOfBirth: toInputDate(client?.personalDetails?.dateOfBirth),
+      gender: client?.personalDetails?.gender || "",
+      nhsNumber: client?.personalDetails?.nhsNumber || "",
+      relationshipStatus: client?.personalDetails?.relationshipStatus || "",
+      ethnicity: client?.personalDetails?.ethnicity || "",
+      historyandBackground: client?.personalDetails?.historyandBackground || "",
     },
-    status: client?.status || "active",
+    status: client?.status || "Active",
     addressInformation: {
-      address: client?.addressInformation.address || "",
-      city: client?.addressInformation.city || "",
-      county: client?.addressInformation.county || "",
-      postCode: client?.addressInformation.postCode || "",
-      country: client?.addressInformation.country || "United Kingdom",
-      accessInstructions: client?.addressInformation.accessInstructions || "",
+      address: client?.addressInformation?.address || "",
+      city: client?.addressInformation?.city || "",
+      county: client?.addressInformation?.county || "",
+      postCode: client?.addressInformation?.postCode || "",
+      country: client?.addressInformation?.country || "United Kingdom",
+      accessInstructions: client?.addressInformation?.accessInstructions || "",
     },
     contactInformation: {
-      primaryPhone: client?.contactInformation.primaryPhone || "",
-      secondaryPhone: client?.contactInformation.secondaryPhone || "",
-      email: client?.contactInformation.email || "",
+      primaryPhone: client?.contactInformation?.primaryPhone || "",
+      secondaryPhone: client?.contactInformation?.secondaryPhone || "",
+      email: client?.contactInformation?.email || "",
       preferredContactMethod:
-        client?.contactInformation.preferredContactMethod || "",
-      bestTimeToContact: client?.contactInformation.bestTimeToContact || "",
+        client?.contactInformation?.preferredContactMethod || "",
+      bestTimeToContact: client?.contactInformation?.bestTimeToContact || "",
     },
     consent: {
-      photoConsent: client?.consent.photoConsent || false,
-      dataProcessingConsent: client?.consent.dataProcessingConsent || false,
+      photoConsent: client?.consent?.photoConsent || false,
+      dataProcessingConsent: client?.consent?.dataProcessingConsent || false,
     },
     healthcareContacts: {
       gp: {
@@ -136,19 +138,78 @@ export function ClientProfileForm({ client, onBack, onSave }) {
         hobbies: client?.preferences?.personal?.hobbies || [],
       },
     },
+  };
+
+  // Formik validation schema
+  const validationSchema = Yup.object({
+    clientId: Yup.string().required("Client ID is required"),
+    personalDetails: Yup.object({
+      fullName: Yup.string().required("Full Name is required"),
+      dateOfBirth: Yup.string().required("Date of Birth is required"),
+    }),
+    addressInformation: Yup.object({
+      address: Yup.string().required("Address is required"),
+    }),
+    consent: Yup.object({
+      dataProcessingConsent: Yup.boolean().oneOf([true], "Consent required"),
+    }),
+  });
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      // Check if client ID already exists (only for new clients)
+      if (!isEditing && clientIdExists) {
+        toast.error(
+          "This Client ID already exists. Please choose a different one."
+        );
+        return;
+      }
+      try {
+        let photoUrl = values.photo || "";
+        if (photoFile) {
+          const formDataImg = new FormData();
+          formDataImg.append("photo", photoFile);
+          const res = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/clients/${
+              client?._id || values.clientId
+            }/photo`,
+            {
+              method: "PATCH",
+              body: formDataImg,
+            }
+          );
+          const data = await res.json();
+          if (data.data && data.data.photo) {
+            photoUrl = data.data.photo;
+          }
+        }
+        await onSave({ ...values, photo: photoUrl });
+      } catch (err) {
+        if (err && err.message) {
+          toast.error(
+            Array.isArray(err.message)
+              ? err.message.map((e) => e.msg || e).join(", ")
+              : err.message
+          );
+        } else {
+          toast.error("An error occurred while saving the client");
+        }
+      }
+    },
   });
 
   // Real-time check for Client ID existence
   useEffect(() => {
-    const id = formData.clientId;
+    const id = formik.values.clientId;
     if (!id || isEditing) {
       setClientIdExists(false);
       setCheckingClientId(false);
       return;
     }
-
     setCheckingClientId(true);
-
     const timeoutId = setTimeout(() => {
       const checkId = async () => {
         try {
@@ -163,72 +224,11 @@ export function ClientProfileForm({ client, onBack, onSave }) {
       };
       checkId();
     }, 500);
-
     return () => clearTimeout(timeoutId);
-  }, [formData.clientId, isEditing, dispatch]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Check if client ID already exists (only for new clients)
-    if (!isEditing && clientIdExists) {
-      toast.error(
-        "This Client ID already exists. Please choose a different one."
-      );
-      return;
-    }
-
-    // Check if client ID is empty
-    if (!formData.clientId.trim()) {
-      toast.error("Client ID is required.");
-      return;
-    }
-
-    try {
-      let photoUrl = formData.photo || "";
-      if (photoFile) {
-        const formDataImg = new FormData();
-        formDataImg.append("photo", photoFile);
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/clients/${
-            client?._id || formData.clientId
-          }/photo`,
-          {
-            method: "PATCH",
-            body: formDataImg,
-          }
-        );
-        const data = await res.json();
-        if (data.data && data.data.photo) {
-          photoUrl = data.data.photo;
-        }
-      }
-      await onSave({ ...formData, photo: photoUrl });
-    } catch (err) {
-      // Display error using toast or similar
-      if (err && err.message) {
-        toast.error(
-          Array.isArray(err.message)
-            ? err.message.map((e) => e.msg || e).join(", ")
-            : err.message
-        );
-      } else {
-        toast.error("An error occurred while saving the client");
-      }
-    }
-  };
+  }, [formik.values.clientId, isEditing, dispatch]);
 
   const handleNestedChange = (section, subsection, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [subsection]: {
-          ...prev[section][subsection],
-          [field]: value,
-        },
-      },
-    }));
+    formik.setFieldValue(`${section}.${subsection}.${field}`, value);
   };
 
   return (
@@ -265,36 +265,47 @@ export function ClientProfileForm({ client, onBack, onSave }) {
           </div>
 
           {/* Modern Form Container */}
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={formik.handleSubmit} className="space-y-8">
             {/* Personal Details */}
             {activeTab === "personal" && (
               <PersonalFormTab
-                formData={formData}
-                setFormData={setFormData}
+                formData={formik.values}
+                setFormData={formik.setValues}
                 client={client}
                 clientIdExists={clientIdExists}
                 checkingClientId={checkingClientId}
                 setPhotoFile={setPhotoFile}
+                errors={formik.errors}
+                touched={formik.touched}
               />
             )}
             {/* Healthcare Contacts Tab */}
             {activeTab === "healthcare" && (
               <HealthFormTab
                 handleNestedChange={handleNestedChange}
-                formData={formData}
+                formData={formik.values}
+                errors={formik.errors}
+                touched={formik.touched}
               />
             )}
 
             {/* Medical Information Tab */}
             {activeTab === "medical" && (
-              <MedicalFormTab formData={formData} setFormData={setFormData} />
+              <MedicalFormTab
+                formData={formik.values}
+                setFormData={formik.setValues}
+                errors={formik.errors}
+                touched={formik.touched}
+              />
             )}
 
             {/* Preferences Tab */}
             {activeTab === "preferences" && (
               <PrefrencesFormTab
-                formData={formData}
+                formData={formik.values}
                 handleNestedChange={handleNestedChange}
+                errors={formik.errors}
+                touched={formik.touched}
               />
             )}
 

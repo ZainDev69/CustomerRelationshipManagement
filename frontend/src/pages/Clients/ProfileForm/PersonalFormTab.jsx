@@ -15,6 +15,8 @@ export function PersonalFormTab({
   checkingClientId,
   clientIdExists,
   setPhotoFile,
+  errors = {},
+  touched = {},
 }) {
   const [isPvt, setIsPvt] = useState(false);
   const isEditing = !!client;
@@ -33,15 +35,14 @@ export function PersonalFormTab({
   // Handle checkbox toggle
   const handlePvtToggle = (checked) => {
     setIsPvt(checked);
-    setFormData((prev) => {
-      let newId = prev.clientId;
-      if (checked && !newId.startsWith("PVT")) {
-        newId = "PVT" + newId.replace(/^PVT/, "");
-      } else if (!checked && newId.startsWith("PVT")) {
-        newId = newId.replace(/^PVT/, "");
-      }
-      return { ...prev, clientId: newId };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      clientId: checked
+        ? prev.clientId.startsWith("PVT")
+          ? prev.clientId
+          : "PVT" + prev.clientId.replace(/^PVT/, "")
+        : prev.clientId.replace(/^PVT/, ""),
+    }));
   };
 
   const handleChange = (section, field, value) => {
@@ -108,6 +109,7 @@ export function PersonalFormTab({
                   if (isPvt) newVal = "PVT" + newVal;
                   setFormData((prev) => ({ ...prev, clientId: newVal }));
                 }}
+                error={touched.clientId && errors.clientId}
               />
               {checkingClientId && !isEditing && (
                 <span className="text-xs text-blue-500">Checking...</span>
@@ -133,6 +135,10 @@ export function PersonalFormTab({
               onChange={(val) =>
                 handleChange("personalDetails", "fullName", val)
               }
+              error={
+                touched.personalDetails?.fullName &&
+                errors.personalDetails?.fullName
+              }
             />
             <Input
               label="Preferred Name"
@@ -152,6 +158,10 @@ export function PersonalFormTab({
               required
               onChange={(val) =>
                 handleChange("personalDetails", "dateOfBirth", val)
+              }
+              error={
+                touched.personalDetails?.dateOfBirth &&
+                errors.personalDetails?.dateOfBirth
               }
             />
             <Input
@@ -292,6 +302,10 @@ export function PersonalFormTab({
               value={formData.addressInformation.address}
               onChange={(val) =>
                 handleChange("addressInformation", "address", val)
+              }
+              error={
+                touched.addressInformation?.address &&
+                errors.addressInformation?.address
               }
             />
           </div>
@@ -438,8 +452,7 @@ export function PersonalFormTab({
         <div className="p-6">
           <div className="space-y-4 bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-2xl border border-indigo-200">
             <Checkbox
-              label="
-Consent to photography for care documentation"
+              label="Consent to photography for care documentation"
               checked={formData.consent.photoConsent}
               onChange={(val) => handleChange("consent", "photoConsent", val)}
             />
@@ -448,6 +461,10 @@ Consent to photography for care documentation"
               checked={formData.consent.dataProcessingConsent}
               onChange={(val) =>
                 handleChange("consent", "dataProcessingConsent", val)
+              }
+              error={
+                touched.consent?.dataProcessingConsent &&
+                errors.consent?.dataProcessingConsent
               }
             />
           </div>

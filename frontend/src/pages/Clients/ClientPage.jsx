@@ -69,14 +69,14 @@ export default function Clients() {
 
   const handleSaveClient = async (formData) => {
     console.log("handleSaveClient called with:", formData);
-    
+
     // Ensure ClientID is set at the top level for backend
     const payload = {
       ...formData,
       ClientID: formData.clientId,
     };
     delete payload.clientId;
-    
+
     console.log("Payload prepared:", payload);
 
     if (!selectedClient?._id && payload.ClientID) {
